@@ -1,30 +1,21 @@
-class card {
-  constructor(suite, value) {
-    suite = suite.toLowerCase()
-    this.suite = suite
-    this.value = value
+class Card {
+  constructor( card ) {
+    let suite = card[0].toLowerCase();
+    let value = card[1];
+    this.suite = suite;
+    this.value = value;
   }
 
-  display() {
+  display( cardtype ) {
     switch (this.value) {
-      case 1:
-        var number = "A";
-      break;
-      case 11:
-        var number = "J";
-      break;
-      case 12:
-        var number = "Q";
-      break;
-      case 13:
-        var number = "K";
-      break;
-      default:
-        var number = this.value;
-      break;
+      case 1:   var number = "A"; break;
+      case 11:  var number = "J"; break;
+      case 12:  var number = "Q"; break;
+      case 13:  var number = "K"; break;
+      default:  var number = this.value; break;
     }
 
-    return "<card data-value='"+this.value+"' class='card-suite-"+this.suite+" card-value-"+this.value+"'>" +
+    return "<card data-value='"+this.value+"' class='card-suite-"+this.suite+ " "+cardtype+" card-value-"+this.value+"'>" +
         "<div class='card-corner card-corner-tl'>" +
           "<div class='card-number'>"+number+"</div>" +
           "<div class='card-symbol'></div>" +
@@ -51,7 +42,126 @@ class card {
         "</div>" +
       "</card>";
   }
+}
+
+class Deck {
+
+  constructor( size ) {
+    var i = 0;
+    this.deck = [];
+    while ( i < size ) {
+      const suites = [ 'heart', 'club', 'diamond', 'spade' ];
+      const values = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 ];
+
+      suites.forEach( suite => {
+        values.forEach( value => {
+          this.deck.push( [suite, value ] );
+        })
+      })
+      i++;
+    }
+    this.shuffle();
+  }
+
+  shuffle() {
+    var j, x, i;
+    var a = this.deck;
+    for (i = a.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    this.deck = a;
+  }
+
+  draw() {
+    let drawcard = this.deck[0];
+    this.deck.splice( 0, 1 );
+    return drawcard;
+  }
+}
+
+class Game {
+
+  debugger;
+
+  constructor( players ) {
+    this.players = players;
+  }
+
+  start(){
+    this.deck = new Deck( 4 );
+    this.giveCard( 1 ); // player
+    this.giveCard( 2 ); // dealer
+    this.giveCard( 1 ); // player
+  }
+
+  giveCard( player, cardtype = 'normal' ){
+    let playercard = new Card( this.deck.draw() );
+    console.log( playercard );
+    $('.player' + player + ' .playercards' ).append( playercard.display( cardtype ) );
+
+    // count
+    let counter = $('.player' + player + ' .counter' );
+    let oldTotal =  parseInt( counter.html() );
+
+    let addTotal = playercard.value;
+
+    if( playercard.value === 11 || playercard.value === 12 || playercard.value === 13 ){
+      addTotal = 10;
+    }
+
+    if( playercard.value === 1 ){
+      if( oldTotal + 11 > 21 ){
+        addTotal = 1;
+      } else {
+        addTotal = 11;
+      }
+    }
+
+    if( counter.attr('data-cards') ){
+      counter.attr('data-cards', counter.attr('data-cards') + ", " + playercard.value );
+    }else{
+      counter.attr('data-cards', playercard.value );
+    }
+
+    counter.html( oldTotal + addTotal );
+  }
+
+  count( player ) {
+    let counter = $('.player' + player + ' .counter' ).attr('data-cards');
+    let cards = counter.split(', ');
+  }
+
+  stand() {
+    this.dealerRun();
+  }
+
+  hit() {
+    this.giveCard( 1 );
+  }
+
+  double() {
+    this.giveCard( 1, 'rotate' );
+    this.dealerRun();
+  }
+
+  split() {
+
+  }
+
+  dealerRun() {
+    console.log( 'dealer' );
+  }
 
 }
 
-$('result').html( new card('club', 12 ).display() );
+var blackJack = new Game( 1 );
+
+blackJack.start();
+
+$('.stand-btn').click( () => blackJack.stand() );
+$('.hit-btn').click( () => blackJack.hit() );
+$('.split-btn').click( () => blackJack.split() );
+$('.double-btn').click( () => blackJack.double() );

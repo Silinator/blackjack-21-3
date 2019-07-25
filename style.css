@@ -6,9 +6,6 @@
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  vertical-align: center;
   background-color: #333333;
   font-family: arial;
 }
@@ -17,14 +14,22 @@ card {
   display: flex;
   flex-wrap: wrap;
   position: relative;
-  height: 150px;
+  max-height: 150px;
+  min-height: 150px;
   width: 100px;
+  height: 150px;
+  max-width: 100px;
+  min-width: 100px;
   padding: 3.226%;
   background-color: #ffffff;
   border: 1px solid #000000;
   border-radius: 5px;
   box-shadow: 4px 2px 11px 2px #232323;
   font-size: 80%;
+}
+
+card.rotate{
+  transform: rotate(-90deg);
 }
 
 .card-corner .card-number{
@@ -176,8 +181,176 @@ card[data-value="11"] .c-p8, card[data-value="11"] .c-p10  { display: block; }
 card[data-value="12"] .card-main-symbol { display: none; }
 card[data-value="12"] .c-p3, card[data-value="12"] .c-p6,
 card[data-value="12"] .c-p8, card[data-value="12"] .c-p10  { display: block; }
-/* 12 /  */
 
+/* 13 /  */
 card[data-value="13"] .card-main-symbol { display: none; }
 card[data-value="13"] .c-p3, card[data-value="13"] .c-p6,
 card[data-value="13"] .c-p8, card[data-value="13"] .c-p10  { display: block; }
+
+/* board */
+.board {
+  display: flex;
+  justify-content: center;
+  background-color: #0a8a2a;
+}
+
+.playerarea ,.dealerarea{
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+  background-color: orange;
+  margin-top: 20px;
+}
+
+.counter{
+  display: flex;
+  justify-content: center;
+  background: white;
+  padding: 5px 6px;
+  border-radius: 3px;
+  border: 1px solid #000000;
+  margin: 20px auto 10px auto;
+}
+
+.playercards {
+  display: flex;
+  justify-content: center;
+  background-color: red;
+}
+
+card:not(:last-child) {
+  margin-right: 20px;
+}
+
+card {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.betoption {
+  display: flex;
+  justify-content: center;
+  flex-flow: column;
+  background-color: yellow;
+  width: 50vw;
+  max-width: 400px;
+  min-width: 200px;
+  margin: auto;
+}
+
+.chips {
+  display: flex;
+  justify-content: space-between;
+  background-color: blue;
+}
+
+.chips-field {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: lime;
+  width: calc( 100% - 35px );
+  margin-right: 5px;
+}
+
+.chips-btns {
+  width: 20px;
+  padding: 5px;
+  background-color: gray;
+}
+
+.add-chips-btn, .minus-chips-btn {
+  border: 1px solid #000000;
+  border-radius: 100%;
+  box-shadow: 3px 4px 5px #333333;
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.add-chips-btn {
+  margin-bottom: 5px;
+  background-color: darkgreen;
+}
+
+.minus-chips-btn {
+  background-color: darkred;
+}
+
+.buttons {
+  display: flex;
+  position: relative;
+  justify-content: space-around;
+}
+
+.btn {
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  width: 25%;
+  min-width: 100px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: 2px solid #333333;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+  box-shadow: inset 0px 1px 2px 0px #000000;
+}
+
+.btn:active {
+  background-color: #3e8e41;
+  box-shadow: inset 0px 2px 5px 1px #000000;
+  /*transform: translateY(4px);*/
+}
+
+.split-btn {
+  position: absolute;
+  top: -30px;
+  left: -160px;
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#f4841c+0,ec7c0c+50,da7808+51,b5780d+100 */
+  background: #f4841c; /* Old browsers */
+  background: -moz-linear-gradient(top,  #f4841c 0%, #ec7c0c 50%, #da7808 51%, #b5780d 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  #f4841c 0%,#ec7c0c 50%,#da7808 51%,#b5780d 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  #f4841c 0%,#ec7c0c 50%,#da7808 51%,#b5780d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4841c', endColorstr='#b5780d',GradientType=0 ); /* IE6-9 */
+}
+
+.stand-btn {
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#f41c27+0,ec0c14+50,da0808+51,b51d0d+100 */
+  background: #f41c27; /* Old browsers */
+  background: -moz-linear-gradient(top,  #f41c27 0%, #ec0c14 50%, #da0808 51%, #b51d0d 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  #f41c27 0%,#ec0c14 50%,#da0808 51%,#b51d0d 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  #f41c27 0%,#ec0c14 50%,#da0808 51%,#b51d0d 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f41c27', endColorstr='#b51d0d',GradientType=0 ); /* IE6-9 */
+
+}
+
+.hit-btn {
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#3ceb0b+0,34d70b+50,27c608+51,16a50b+100 */
+  background: #3ceb0b; /* Old browsers */
+  background: -moz-linear-gradient(top,  #3ceb0b 0%, #34d70b 50%, #27c608 51%, #16a50b 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  #3ceb0b 0%,#34d70b 50%,#27c608 51%,#16a50b 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  #3ceb0b 0%,#34d70b 50%,#27c608 51%,#16a50b 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3ceb0b', endColorstr='#16a50b',GradientType=0 ); /* IE6-9 */
+
+}
+
+.double-btn {
+  position: absolute;
+  top: -30px;
+  right: -160px;
+  /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#6ebdf2+0,54aeee+50,369cf0+51,1e74de+100 */
+  background: #6ebdf2; /* Old browsers */
+  background: -moz-linear-gradient(top,  #6ebdf2 0%, #54aeee 50%, #369cf0 51%, #1e74de 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  #6ebdf2 0%,#54aeee 50%,#369cf0 51%,#1e74de 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  #6ebdf2 0%,#54aeee 50%,#369cf0 51%,#1e74de 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6ebdf2', endColorstr='#1e74de',GradientType=0 ); /* IE6-9 */
+
+}
