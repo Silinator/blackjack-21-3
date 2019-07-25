@@ -84,10 +84,9 @@ class Deck {
 
 class Game {
 
-  debugger;
-
   constructor( players ) {
     this.players = players;
+    this.playerMove = 1;
   }
 
   start(){
@@ -126,29 +125,64 @@ class Game {
       counter.attr('data-cards', playercard.value );
     }
 
-    counter.html( oldTotal + addTotal );
+    let newsum = oldTotal + addTotal;
+
+    counter.attr( 'data-count', newsum );
+    counter.html( newsum );
+
+    return newsum;
   }
 
   count( player ) {
     let counter = $('.player' + player + ' .counter' ).attr('data-cards');
     let cards = counter.split(', ');
+
+    let newsum = oldTotal + addTotal;
   }
 
-  stand() {
-    this.dealerRun();
+  nextplayer( player ){
+    if( player < this.players ){
+      this.playerMove++;
+    }else{
+      this.playerMove = 2;
+      this.dealerRun();
+    }
   }
 
-  hit() {
-    this.giveCard( 1 );
+  stand( player ) {
+    if( this.playerMove === player )
+    {
+      this.nextplayer();
+    }
   }
 
-  double() {
-    this.giveCard( 1, 'rotate' );
-    this.dealerRun();
+  hit( player ) {
+    if( this.playerMove === player )
+    {
+      if( this.giveCard( 1 ) > 21 ){
+        this.bust( player );
+      }
+    }
   }
 
-  split() {
+  double( player ) {
+    if( this.playerMove === player )
+    {
+      this.giveCard( 1, 'rotate' );
+      this.nextplayer();
+    }
+  }
 
+  split( player ) {
+    if( this.playerMove === player ) // TODO:  if split is posible
+    {
+      console.log( 'split' );
+    }
+  }
+
+  bust( player ){
+    console.log( player + 'bust' );
+    this.nextplayer();
   }
 
   dealerRun() {
@@ -161,7 +195,7 @@ var blackJack = new Game( 1 );
 
 blackJack.start();
 
-$('.stand-btn').click( () => blackJack.stand() );
-$('.hit-btn').click( () => blackJack.hit() );
-$('.split-btn').click( () => blackJack.split() );
-$('.double-btn').click( () => blackJack.double() );
+$('.stand-btn').click( () => {  blackJack.stand( 1 ) } );
+$('.hit-btn').click( () => {    blackJack.hit( 1 ) } );
+$('.split-btn').click( () => {  blackJack.split( 1 ) } );
+$('.double-btn').click( () => { blackJack.double( 1 ) } );

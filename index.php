@@ -26,10 +26,10 @@
             </div>
           </div>
           <div class="buttons">
-            <div class="split-btn btn"> Split </div>
+            <div class="split-btn grayed-btn btn"> Split </div>
               <div class="stand-btn btn"> Stand </div>
               <div class="hit-btn btn" > Hit </div>
-            <div class="double-btn btn"> Double </div>
+            <div class="double-btn grayed-btn btn"> Double </div>
           </div>
         </div>
       </div>
