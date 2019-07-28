@@ -48,6 +48,7 @@ class Deck {
 
   constructor( size ) {
     var i = 0;
+    this.playedcards = 0;
     this.deck = [];
     while ( i < size ) {
       const suites = [ 'heart', 'club', 'diamond', 'spade' ];
@@ -76,6 +77,7 @@ class Deck {
   }
 
   draw() {
+    this.playedcards++;
     let drawcard = this.deck[0];
     this.deck.splice( 0, 1 );
     return drawcard;
@@ -83,41 +85,41 @@ class Deck {
 }
 
 class Game {
-
   constructor( players ) {
+    this.deck = new Deck( 4 );
     this.players = players;
-    this.playerMove = 1;
+    this.playerMove = 0;
   }
 
   start(){
-    this.deck = new Deck( 4 );
-    this.giveCard( 1 ); // player
-    this.giveCard( 2 ); // dealer
-    this.giveCard( 1 ); // player
+    // new deck after 1 deck is played
+    if(this.deck.playedcards >= 52){
+      this.deck = new Deck( 4 );
+    }
+
+    //reset
+    this.playerMove = 0;
+    for (var i = 0; i <= this.players; i++) {
+      $( ".player" + i + " .counter" ).html(0);
+      $( ".player" + i + " .counter" ).attr( 'data-cards', '');
+      $( ".player" + i + " .counter" ).attr( 'data-count', '0');
+      $( ".player" + i + " .playercards" ).html('');
+      $( ".player" + i + " .double-btn" ).removeClass('grayed-btn');
+    }
+
+    this.draw( 1 ); // player
+    this.draw( 0 ); // dealer
+    this.draw( 1 ); // player
+    //insurence
+    this.nextplayer( true );
   }
 
   giveCard( player, cardtype = 'normal' ){
     let playercard = new Card( this.deck.draw() );
-    console.log( playercard );
     $('.player' + player + ' .playercards' ).append( playercard.display( cardtype ) );
 
     // count
     let counter = $('.player' + player + ' .counter' );
-    let oldTotal =  parseInt( counter.html() );
-
-    let addTotal = playercard.value;
-
-    if( playercard.value === 11 || playercard.value === 12 || playercard.value === 13 ){
-      addTotal = 10;
-    }
-
-    if( playercard.value === 1 ){
-      if( oldTotal + 11 > 21 ){
-        addTotal = 1;
-      } else {
-        addTotal = 11;
-      }
-    }
 
     if( counter.attr('data-cards') ){
       counter.attr('data-cards', counter.attr('data-cards') + ", " + playercard.value );
@@ -125,10 +127,11 @@ class Game {
       counter.attr('data-cards', playercard.value );
     }
 
-    let newsum = oldTotal + addTotal;
+    let newsum = this.count( player )[0];
+    let newsumtxt = this.count( player )[1];
 
     counter.attr( 'data-count', newsum );
-    counter.html( newsum );
+    counter.html( newsumtxt );
 
     return newsum;
   }
@@ -136,17 +139,46 @@ class Game {
   count( player ) {
     let counter = $('.player' + player + ' .counter' ).attr('data-cards');
     let cards = counter.split(', ');
+    var totalValue = 0;
 
-    let newsum = oldTotal + addTotal;
-  }
+    for (var i = 0; i < cards.length; i++) {
+      let cardValue = parseInt( cards[i] );
+      var addTotal = cardValue;
 
-  nextplayer( player ){
-    if( player < this.players ){
-      this.playerMove++;
-    }else{
-      this.playerMove = 2;
-      this.dealerRun();
+      if( cardValue === 11 || cardValue === 12 || cardValue === 13 ){
+        addTotal = 10;
+      }
+
+      if( cardValue === 1 ){
+        addTotal = 11;
+      }
+
+      totalValue += addTotal;
     }
+
+    var aces = cards.filter( (el) => {
+      return el == 1
+    });
+
+    var try_val = totalValue;
+    var ace_used = 0;
+
+      for (var i = 0; i < aces.length; i++) {
+        if( try_val > 21 ) {
+          ace_used++;
+          try_val = try_val - 10;
+        }else{
+          i = aces;
+        }
+      }
+
+      if( aces.length > ace_used && try_val < 21 ) {
+        var try_txt = try_val - 10 + "/" + try_val
+      } else{
+        var try_txt = try_val;
+      }
+
+      return [try_val, try_txt ];
   }
 
   stand( player ) {
@@ -156,20 +188,29 @@ class Game {
     }
   }
 
+  draw( player ) {
+    this.giveCard( player );
+  }
+
   hit( player ) {
-    if( this.playerMove === player )
-    {
-      if( this.giveCard( 1 ) > 21 ){
+    if( this.playerMove === player ) {
+      var currentPlayerValue = this.giveCard( player )
+      if( currentPlayerValue > 21 ) {
         this.bust( player );
+      }else if( currentPlayerValue === 21) {
+        this.nextplayer();
       }
     }
+    $('.player' + player + ' .double-btn' ).addClass('grayed-btn');
   }
 
   double( player ) {
     if( this.playerMove === player )
     {
-      this.giveCard( 1, 'rotate' );
-      this.nextplayer();
+      if( $('.player' + player + ' .counter' ).attr('data-cards').split(', ').length === 2 ){
+        this.giveCard( 1, 'rotate' );
+        this.nextplayer();
+      }
     }
   }
 
@@ -181,12 +222,61 @@ class Game {
   }
 
   bust( player ){
-    console.log( player + 'bust' );
     this.nextplayer();
   }
 
+  nextplayer( start = false ){
+    if( this.playerMove !== 0 || start === true ) {
+      if( this.playerMove < this.players ){
+        this.playerMove++;
+        if( this.count( this.playerMove )[0] >= 21 ){
+          this.nextplayer();
+        }
+      }else{
+        this.playerMove = 0;
+        this.dealerRun();
+      }
+    }
+  }
+
   dealerRun() {
-    console.log( 'dealer' );
+    var that = this;
+    if( this.count( 0 )[0] <= 16 ){
+      setTimeout(function () {
+        that.hit( 0 );
+        that.dealerRun();
+      }, 500);
+    }else{
+      this.end();
+    }
+  }
+
+  end(){
+    var that = this;
+    for (var p = 1; p <= that.players; p++) {
+      var playerCardCount = that.count( p )[0];
+      var dealerCardCount = that.count( 0 )[0];
+      var playerCards = $('.player' + p + ' .counter' ).attr('data-cards').split(', ').length;
+      var dealerCards = $('.player' + 0 + ' .counter' ).attr('data-cards').split(', ').length;
+
+      if( playerCardCount === 21 && playerCards === 2 && dealerCardCount === 21 && dealerCards === 2 ){
+        console.log( "player" + p + " tied" );
+      }else if( playerCardCount === 21 && playerCards === 2 && ( dealerCardCount !== 21 || dealerCards !== 2) ){
+        console.log( "player" + p + " BLACKJACK" );
+      }else{
+        if( playerCardCount <= 21 && dealerCardCount <= 21 && playerCardCount > dealerCardCount ) {
+          console.log( "player" + p + " wins" );
+        }else if( playerCardCount <= 21 && dealerCardCount <= 21 && playerCardCount < dealerCardCount  ) {
+          console.log( "player" + p + " loses" );
+        }else if( playerCardCount <= 21 && dealerCardCount <= 21 && playerCardCount == dealerCardCount  ) {
+          console.log( "player" + p + " tied" );
+        }else if( playerCardCount > 21 ) {
+          console.log( "player" + p + " loses" );
+        }else if( dealerCardCount > 21 ) {
+          console.log( "player" + p + " wins" );
+        }
+      }
+    }
   }
 
 }
@@ -199,3 +289,4 @@ $('.stand-btn').click( () => {  blackJack.stand( 1 ) } );
 $('.hit-btn').click( () => {    blackJack.hit( 1 ) } );
 $('.split-btn').click( () => {  blackJack.split( 1 ) } );
 $('.double-btn').click( () => { blackJack.double( 1 ) } );
+$('.start').click( () => { blackJack.start() } );

@@ -363,3 +363,10 @@ card {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#868686', endColorstr='#606060',GradientType=0 ); /* IE6-9 */
   cursor: not-allowed;
 }
+
+.start {
+  display: black;
+  margin-top: 40px;
+  margin-left: auto;
+  width: 100px;
+}

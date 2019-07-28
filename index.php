@@ -9,12 +9,12 @@
   </head>
   <body>
     <board>
-      <div class="dealerarea player2" data-total="0">
+      <div class="dealerarea player0">
         <div class="counter"> 0 </div>
         <div class="playercards"> </div>
       </div>
 
-      <div class="playerarea player1" data-total="0">
+      <div class="playerarea player1">
         <div class="counter"> 0 </div>
         <div class="playercards"> </div>
         <div class="betoption">
@@ -29,10 +29,15 @@
             <div class="split-btn grayed-btn btn"> Split </div>
               <div class="stand-btn btn"> Stand </div>
               <div class="hit-btn btn" > Hit </div>
-            <div class="double-btn grayed-btn btn"> Double </div>
+            <div class="double-btn btn"> Double </div>
           </div>
         </div>
       </div>
+
+      <div class="start btn">
+        START
+      </div>
+
     </board>
   </body>
 </html>
