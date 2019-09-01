@@ -86,15 +86,15 @@ class Deck {
 
 class Game {
   constructor( players ) {
-    this.deck = new Deck( 4 );
+    this.deck = new Deck( 6 );
     this.players = players;
     this.playerMove = 0;
   }
 
   start(){
-    // new deck after 1 deck is played
-    if(this.deck.playedcards >= 52){
-      this.deck = new Deck( 4 );
+    // new deck after half fulldeck is played
+    if(this.deck.playedcards >= 3 * 52) {
+      this.deck = new Deck( 6 );
     }
 
     //reset
@@ -105,12 +105,37 @@ class Game {
       $( ".player" + i + " .counter" ).attr( 'data-count', '0');
       $( ".player" + i + " .playercards" ).html('');
       $( ".player" + i + " .double-btn" ).removeClass('grayed-btn');
+      $( ".player" + i + " .split-btn" ).addClass('grayed-btn');
+      $( ".player" + i + " .splitplayerarea" ).remove();
+      $( ".player" + i + " .counter" ).show();
+      $( ".player" + i + " .playercards" ).show();
     }
 
-    this.draw( 1 ); // player
-    this.draw( 0 ); // dealer
-    this.draw( 1 ); // player
-    //insurence
+    for (var i = 0; i < 2; i++) {
+      for (var j = 1; j <= this.players; j++) {
+        this.draw( j ); // player
+
+        if( i === 1 ) { // can player split
+          let counter = $('.player' + j + ' .counter' ).attr('data-cards');
+          let cards = counter.split(', ');
+          if( cards[0] === cards[1] ) {
+            $( ".player" + j + " .split-btn" ).removeClass('grayed-btn');
+          }
+        }
+      }
+
+      if( i === 0 ) {
+        this.draw( 0 ); // dealer
+          //check sidebets
+      }
+    }
+
+    //insurence | dealer shows ace
+    if( $('.player0 .counter').attr('data-cards') == "1" ) {
+      this.insurence();
+    }
+
+    //first player regular run
     this.nextplayer( true );
   }
 
@@ -217,7 +242,60 @@ class Game {
   split( player ) {
     if( this.playerMove === player ) // TODO:  if split is posible
     {
-      console.log( 'split' );
+      let counter = $('.player' + player + ' .counter' ).attr('data-cards');
+      let cards = counter.split(', ');
+      if( cards[0] === cards[1] ) {
+        if( player === Math.round( player) )
+        {
+          //first time split
+          $('.player' + player + ' .betoption').before("<div class='splitplayerarea'></div>");
+          $('.player' + player + ' .splitplayerarea').append("<div class='playerarea player"+ player + "-1'></div>");
+          $('.player' + player + ' .splitplayerarea').append("<div class='playerarea player"+ player + "-2'></div>");
+
+          let first_split = $('.player' + player + '-1' );
+          let second_split = $('.player' + player + '-2' );
+
+          let clone_counter = $('.player' + player + ' .counter');
+          let clone_playercards = $('.player' + player + ' .playercards');
+
+          first_split.append( clone_counter.clone() );
+          first_split.append( clone_playercards.clone() );
+
+          second_split.append( clone_counter.clone() );
+          second_split.append( clone_playercards.clone() );
+
+          //remove second
+          first_split.find('card').eq(1).remove();
+          second_split.find('card').eq(0).remove();
+
+          //counter
+          let first_split_counter = $('.player' + player + '-1 .counter');
+          first_split_counter.attr('data-cards', first_split_counter.attr('data-cards').split(', ')[1] );
+
+          let second_split_counter = $('.player' + player + '-2 .counter');
+          second_split_counter.attr('data-cards', second_split_counter.attr('data-cards').split(', ')[0] );
+
+          let first_counter = this.count( player + '-1' );
+            first_split_counter.attr( 'data-count', first_counter[0] );
+            first_split_counter.html( first_counter[1]  );
+
+          let second_counter = this.count( player + '-2' );
+            second_split_counter.attr( 'data-count', first_counter[0] );
+            second_split_counter.html( first_counter[1]  );
+
+          clone_counter.hide();
+          clone_playercards.hide();
+
+        } else {
+          //if alredy splitted
+        }
+      }
+    }
+  }
+
+  insurence() {
+    for (var i = 1; i <= this.players; i++) {
+      console.log( 'insurence' + i );
     }
   }
 

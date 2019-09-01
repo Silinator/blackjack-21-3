@@ -202,6 +202,16 @@ card[data-value="13"] .c-p8, card[data-value="13"] .c-p10  { display: block; }
   margin-top: 20px;
 }
 
+.splitplayerarea {
+  display: flex;
+  justify-content: center;
+}
+
+.splitplayerarea .playerarea {
+  margin-left: 25px;
+  margin-right: 25px;
+}
+
 .counter{
   display: flex;
   justify-content: center;
